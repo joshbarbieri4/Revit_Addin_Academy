@@ -9,6 +9,15 @@
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
   </AddIn>
+  <AddIn Type="Command">
+    <Text>Command 01</Text>
+    <Description>Some description for Revit_Addin_Academy</Description>
+    <Assembly>Revit_Addin_Academy.dll</Assembly>
+    <FullClassName>Revit_Addin_Academy.Command01</FullClassName>
+    <ClientId>B621245C-3428-4F49-B33F-480F1F8A52CE</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
   <AddIn Type="Application">
     <Name>Application Revit_Addin_Academy</Name>
     <Assembly>Revit_Addin_Academy.dll</Assembly>
