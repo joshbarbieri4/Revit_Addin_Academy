@@ -7,7 +7,6 @@ using Autodesk.Revit.UI.Selection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 
 #endregion
 
@@ -25,9 +24,9 @@ namespace Revit_Addin_Academy
 			UIDocument uidoc = uiapp.ActiveUIDocument;
 			Application app = uiapp.Application;
 			Document doc = uidoc.Document;
-
+			
 			// Variables for Session 01 Challenge
-			string filename = doc.PathName;
+			string filename = doc.PathName;			
 			int range = 100;
 			double offset = 0.05;
 			double offsetCalc = offset * doc.ActiveView.Scale;
@@ -42,7 +41,7 @@ namespace Revit_Addin_Academy
 
 
 			//Begin Transaction on Revit Model
-			using (Transaction t = new Transaction(doc))
+			using(Transaction t = new Transaction(doc))
 			{
 				t.Start("FizzBuzz");
 
@@ -53,15 +52,15 @@ namespace Revit_Addin_Academy
 					string result = CheckFizzBuzz(i);
 
 					CreateTextNote(doc, result, curPoint, collector.FirstElementId());
-					curPoint = curPoint.Subtract(offsetPoint);
+					curPoint = curPoint.Subtract(offsetPoint);					
 				}
 
 				// End Transaction
 				t.Commit();
 			}
-
+			
 			return Result.Succeeded;
-		}
+		}				
 		internal void CreateTextNote(Document doc, string text, XYZ curPoint, ElementId id)
 		{
 			TextNote curNote = TextNote.Create(doc, doc.ActiveView.Id, curPoint, text, id);
@@ -92,4 +91,3 @@ namespace Revit_Addin_Academy
 		}
 	}
 }
-
