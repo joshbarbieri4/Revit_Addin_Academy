@@ -52,6 +52,7 @@ namespace Revit_Addin_Academy
 				dataArray[1] = data2;
 
 				dataList.Add(dataArray);
+
 			}
 
 			using(Transaction t = new Transaction(doc))
