@@ -14,7 +14,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace Revit_Addin_Academy
 {
 	[Transaction(TransactionMode.Manual)]
-	public class Command : IExternalCommand
+	public class cmdProjectSetup : IExternalCommand
 	{
 		public Result Execute(
 		  ExternalCommandData commandData,
@@ -37,43 +37,25 @@ namespace Revit_Addin_Academy
 
 			// do some stuff in Excel
 
-			List<string[]> dataList = new List<string[]>(); // Group all arrays together
+			using (Transaction t = new Transaction(doc))
+			{ 
+				t.Start("Project Setup from Excel File");
+								
+				for (int i = 2; i <= rowCount; i++) // Loop through each row, one at time, and get specific cells
+				{
+					Excel.Range cell1 = excelWs.Cells[i, 1]; // Level Name, also specfies X-Y of a specific cell
+					Excel.Range cell2 = excelWs.Cells[i, 2]; // Level Elevation
 
-			for (int i = 1; i < rowCount; i++) // Loop through each row, one at time, and get specific cells
-			{
-				Excel.Range cell1 = excelWs.Cells[i, 1]; // X-Y of a specific cell
-				Excel.Range cell2 = excelWs.Cells[i, 2];
-
-				string data1 = cell1.Value.ToString(); // get the values of the specific cells above and putting into a variable
-				string data2 = cell2.Value.ToString();
-
-				string[] dataArray = new string[2]; // creating an array [like a box with two spots that are empty]
-				dataArray[0] = data1; // store data in array
-				dataArray[1] = data2;
-
-				dataList.Add(dataArray);
-
-			}
-
-			using(Transaction t = new Transaction(doc))
-			{
-				t.Start("Create some Revit Stuff");
-
-				Level curLevel = Level.Create(doc, 100);
-
-				FilteredElementCollector collector = new FilteredElementCollector(doc);
-				collector.OfCategory(BuiltInCategory.OST_TitleBlocks);
-				collector.WhereElementIsElementType();
-
-				ViewSheet curSheet = ViewSheet.Create(doc, collector.FirstElementId());
-				curSheet.SheetNumber = "aaaa";
-				curSheet.Name = "New Sheet";
-			
+					string data1 = cell1.Value.ToString(); // get the values of the specific cells above and putting into a variable
+					double data2 = Convert.ToDouble(cell2.Value); // convert data 2 to integer values for level
+														
+					Level curLevel = Level.Create(doc, data2);
+					curLevel.Name = data1;
+					
+				}
 
 				t.Commit();
-			}
-
-
+			}			
 
 			// Opens Excel and Close Excel and avoids too many instances of Excel Running in the background.
 			excelWb.Close();
