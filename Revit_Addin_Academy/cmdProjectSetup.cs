@@ -31,9 +31,12 @@ namespace Revit_Addin_Academy
 			Excel.Application excelApp = new Excel.Application(); // Creating an instance of Excel or getting the application
 			Excel.Workbook excelWb = excelApp.Workbooks.Open(excelFile); // Open Excel to get the workbook or the particular file above
 			Excel.Worksheet excelWs = excelWb.Worksheets.Item[1]; // Now getting the specific Worksheet of the file above
+			Excel.Worksheet excelWs2 = excelWb.Worksheets.Item[2];
 
 			Excel.Range excelRng = excelWs.UsedRange; // Creating a Range or selection of cells in use
+			Excel.Range excelRng2 = excelWs2.UsedRange;
 			int rowCount = excelRng.Rows.Count; // Reports us how many rows there are in the excel file
+			int rowCount2 = excelRng2.Rows.Count;
 
 			// do some stuff in Excel
 
@@ -50,8 +53,22 @@ namespace Revit_Addin_Academy
 					double data2 = Convert.ToDouble(cell2.Value); // convert data 2 to integer values for level
 														
 					Level curLevel = Level.Create(doc, data2);
-					curLevel.Name = data1;
-					
+					curLevel.Name = data1;					
+				}
+
+				for (int i = 2; i <= rowCount2; i++)
+				{
+					Excel.Range cell1 = excelWs2.Cells[i, 1]; 
+					Excel.Range cell2 = excelWs2.Cells[i, 2];
+										
+					FilteredElementCollector collector = new FilteredElementCollector(doc);
+					collector.OfCategory(BuiltInCategory.OST_TitleBlocks);
+					collector.WhereElementIsElementType();
+
+					ViewSheet curSheet = ViewSheet.Create(doc, collector.FirstElementId());
+
+					curSheet.SheetNumber = cell1.Value.ToString();
+					curSheet.Name = cell2.Value.ToString();
 				}
 
 				t.Commit();
