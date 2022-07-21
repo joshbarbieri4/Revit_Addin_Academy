@@ -51,8 +51,8 @@ namespace Revit_Addin_Academy
 
 			int rowCount1 = excelRange1.Rows.Count;
 			int rowCount2 = excelRange2.Rows.Count;
-
 			int levelCounter = 0;
+			
 			ViewFamilyType curVFT = null;
 			ViewFamilyType curRCPVFT = null;
 
@@ -90,6 +90,9 @@ namespace Revit_Addin_Academy
 						levelCounter++;
 
 						ViewPlan curPlan = ViewPlan.Create(doc, curVFT.Id, newLevel.Id);
+
+						ViewPlan curRCP = ViewPlan.Create(doc, curRCPVFT.Id, newLevel.Id);
+						curRCP.Name = curRCP.Name + " RCP";
 					}
 					catch (Exception ex)
 					{
