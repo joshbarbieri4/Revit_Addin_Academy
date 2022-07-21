@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Forms = System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 #endregion
 
@@ -31,47 +32,62 @@ namespace Revit_Addin_Academy
 			dialog.Multiselect = true;
 			dialog.Filter = "Excel Files | *.xls; *.xlsx"; // What the user sees & specifiy what type of file the user can select
 
-			string[] filePaths;
+			string excelFile = "";
 			
 			if(dialog.ShowDialog() == Forms.DialogResult.OK) // opens dialog box, and user clicks ok do something - captures what the user does
 			{
-				// filePath = dialog.FileName;
-				filePaths = dialog.FileNames;
+				excelFile = dialog.FileName;				
 			}
-													
-			return Result.Succeeded;
-		}
 
-		internal View GetViewByName(Document doc, string ViewName)
-		{
-			FilteredElementCollector collector = new FilteredElementCollector(doc);
-			collector.OfClass(typeof(View));
+			// open Excel
+			Excel.Application excelApp = new Excel.Application(); // created a variable that holds the application and opens it
+			Excel.Workbook excelWb = excelApp.Workbooks.Open(excelFile);
 
-			foreach(View curView in collector)
+			Excel.Worksheet excelWs1 = excelWb.Worksheets.Item[1];
+			Excel.Worksheet excelWs2 = excelWb.Worksheets.Item[2];
+
+			Excel.Range excelRange1 = excelWs1.UsedRange;
+			Excel.Range excelRange2 = excelWs2.UsedRange;
+
+			int rowCount1 = excelRange1.Rows.Count;
+			int rowCount2 = excelRange2.Rows.Count;
+
+			int levelCounter = 0;
+
+			using (Transaction t = new Transaction(doc))
 			{
-				if(curView.Name == ViewName)
+				t.Start("Setup project");
+
+				for (int i = 2; i <= rowCount1; i++)
 				{
-					return curView;
+					Excel.Range levelData1 = excelWs1.Cells[i, 1]; // get level name
+					Excel.Range levelData2 = excelWs1.Cells[i, 2]; // get level elevation
+
+					string levelName = levelData1.Value.ToString();
+					double levelElev = levelData2.Value;
+
+					try
+					{
+						Level newLevel = Level.Create(doc, levelElev);
+						newLevel.Name = levelName;
+						levelCounter++;
+					}
+					catch (Exception ex)
+					{
+						Debug.Print(ex.Message);
+						throw;
+					}										
 				}
+
+				t.Commit();
+
+				excelWb.Close();
+				excelApp.Quit();
+
+				return Result.Succeeded;
 			}
-
-			return null;
 		}
-
-		internal struct TestStruct
-		{ 
-			public string Name;
-			public int Value;
-			public double Value2;
-
-			// creating a constructor
-			public TestStruct(string name, int value, double value2)
-			{
-				Name = name;
-				Value = value;
-				Value2 = value2;
-			}			
-		}
+	
 	}
 
 }
