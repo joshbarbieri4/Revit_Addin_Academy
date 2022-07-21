@@ -53,11 +53,28 @@ namespace Revit_Addin_Academy
 			int rowCount2 = excelRange2.Rows.Count;
 
 			int levelCounter = 0;
+			ViewFamilyType curVFT = null;
+			ViewFamilyType curRCPVFT = null;
+
+			FilteredElementCollector collector = new FilteredElementCollector(doc);
+			collector.OfClass(typeof(ViewFamilyType));
+
+			foreach (ViewFamilyType curElem in collector)
+			{
+				if (curElem.ViewFamily == ViewFamily.FloorPlan)
+				{
+					curVFT = curElem;
+				}
+				else if (curElem.ViewFamily == ViewFamily.CeilingPlan)
+				{
+					curRCPVFT = curElem;
+				}
+			}
 
 			using (Transaction t = new Transaction(doc))
 			{
 				t.Start("Setup project");
-
+				
 				for (int i = 2; i <= rowCount1; i++)
 				{
 					Excel.Range levelData1 = excelWs1.Cells[i, 1]; // get level name
@@ -71,14 +88,18 @@ namespace Revit_Addin_Academy
 						Level newLevel = Level.Create(doc, levelElev);
 						newLevel.Name = levelName;
 						levelCounter++;
+
+						ViewPlan curPlan = ViewPlan.Create(doc, curVFT.Id, newLevel.Id);
 					}
 					catch (Exception ex)
 					{
 						Debug.Print(ex.Message);
 						throw;
-					}										
+					}						
+										
 				}
 
+				
 				t.Commit();
 
 				excelWb.Close();
