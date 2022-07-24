@@ -57,7 +57,7 @@ namespace Revit_Addin_Academy
 			ViewFamilyType curRCPVFT = null;
 
 			FilteredElementCollector collector = new FilteredElementCollector(doc);
-			collector.OfClass(typeof(ViewFamilyType));
+			collector.OfClass(typeof(ViewFamilyType));			
 
 			foreach (ViewFamilyType curElem in collector)
 			{
@@ -80,8 +80,18 @@ namespace Revit_Addin_Academy
 					Excel.Range levelData1 = excelWs1.Cells[i, 1]; // get level name
 					Excel.Range levelData2 = excelWs1.Cells[i, 2]; // get level elevation
 
+					Excel.Range sheetData1 = excelWs2.Cells[i, 1]; // get sheet number
+					Excel.Range sheetData2 = excelWs2.Cells[i, 2]; // get sheet name
+
 					string levelName = levelData1.Value.ToString();
 					double levelElev = levelData2.Value;
+
+					string sheetNum = sheetData1.Value.ToString();
+					string sheetName = sheetData2.Value.ToString();
+
+					FilteredElementCollector collector2 = new FilteredElementCollector(doc);
+					collector2.OfCategory(BuiltInCategory.OST_TitleBlocks);
+					collector2.WhereElementIsElementType();
 
 					try
 					{
@@ -93,6 +103,11 @@ namespace Revit_Addin_Academy
 
 						ViewPlan curRCP = ViewPlan.Create(doc, curRCPVFT.Id, newLevel.Id);
 						curRCP.Name = curRCP.Name + " RCP";
+
+						ViewSheet newSheet = ViewSheet.Create(doc, collector.FirstElementId());
+						newSheet.SheetNumber = sheetNum;
+						newSheet.Name = sheetName;
+
 					}
 					catch (Exception ex)
 					{
@@ -102,7 +117,6 @@ namespace Revit_Addin_Academy
 										
 				}
 
-				
 				t.Commit();
 
 				excelWb.Close();
