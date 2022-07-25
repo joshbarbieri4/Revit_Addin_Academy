@@ -83,48 +83,41 @@ namespace Revit_Addin_Academy
 				{
 					Excel.Range levelData1 = excelWs1.Cells[i, 1]; // get level name
 					Excel.Range levelData2 = excelWs1.Cells[i, 2]; // get level elevation
+					Excel.Range sheetData1 = excelWs2.Cells[i, 1]; // get sheet number
+					Excel.Range sheetData2 = excelWs2.Cells[i, 2]; // get sheet name
+					Excel.Range sheetData3 = excelWs2.Cells[i, 3]; // get view name
 
 					string levelName = levelData1.Value.ToString();
 					double levelElev = levelData2.Value;
+					string sheetNum = sheetData1.Value.ToString();
+					string sheetName = sheetData2.Value.ToString();
+					string viewName = sheetData3.Value.ToString();
 
-					try
-					{
-						Level newLevel = Level.Create(doc, levelElev);
-						newLevel.Name = levelName;
-						levelCounter++;
-
-						ViewPlan curPlan = ViewPlan.Create(doc, curVFT.Id, newLevel.Id);
-
-						ViewPlan curRCP = ViewPlan.Create(doc, curRCPVFT.Id, newLevel.Id);
-						curRCP.Name = curRCP.Name + " RCP";
-					}
-					catch (Exception ex)
-					{
-						Debug.Print(ex.Message);
-						throw;
-					}
-				}
 					
-				for (int j = 2; j <= rowCount2; j++)
+					Level newLevel = Level.Create(doc, levelElev);
+					newLevel.Name = levelName;
+					levelCounter++;
+
+					ViewPlan curPlan = ViewPlan.Create(doc, curVFT.Id, newLevel.Id);
+
+					ViewPlan curRCP = ViewPlan.Create(doc, curRCPVFT.Id, newLevel.Id);
+					curRCP.Name = curRCP.Name + " RCP";
+
+					ViewSheet newSheet = ViewSheet.Create(doc, collector2.FirstElementId());
+					newSheet.SheetNumber = sheetNum;
+					newSheet.Name = sheetName;
+
+					View existingView = GetViewByName(doc, viewName);
+
+					if (existingView != null)
 					{
-						Excel.Range sheetData1 = excelWs2.Cells[j, 1]; // get sheet number
-						Excel.Range sheetData2 = excelWs2.Cells[j, 2]; // get sheet name
-
-						string sheetNum = sheetData1.Value.ToString();
-						string sheetName = sheetData2.Value.ToString();
-
-						try
-						{
-							ViewSheet newSheet = ViewSheet.Create(doc, collector2.FirstElementId());
-							newSheet.SheetNumber = sheetNum;
-							newSheet.Name = sheetName;
-						}
-						catch (Exception ex)
-						{
-							Debug.Print(ex.Message);
-						}
+						Viewport newVP = Viewport.Create(doc, newSheet.Id, curPlan.Id, new XYZ(0, 0, 0));
 					}
-				
+					else
+					{
+						TaskDialog.Show("Error", "Could not find view.");
+					}					
+				}		
 
 				t.Commit();
 
@@ -134,7 +127,21 @@ namespace Revit_Addin_Academy
 				return Result.Succeeded;
 			}
 		}
-	
+		internal View GetViewByName(Document doc, string ViewName)
+		{
+			FilteredElementCollector collector = new FilteredElementCollector(doc);
+			collector.OfClass(typeof(View));
+
+			foreach (View curView in collector)
+			{
+				if (curView.Name == ViewName)
+				{
+					return curView;
+				}
+			}
+			return null;
+		}
+
 	}
 
 }
