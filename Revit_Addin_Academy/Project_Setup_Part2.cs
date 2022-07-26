@@ -51,8 +51,7 @@ namespace Revit_Addin_Academy
 
 			int rowCount1 = excelRange1.Rows.Count;
 			int rowCount2 = excelRange2.Rows.Count;
-			int levelCounter = 0;
-			
+						
 			ViewFamilyType curVFT = null;
 			ViewFamilyType curRCPVFT = null;
 
@@ -91,13 +90,12 @@ namespace Revit_Addin_Academy
 					double levelElev = levelData2.Value;
 					string sheetNum = sheetData1.Value.ToString();
 					string sheetName = sheetData2.Value.ToString();
-					string viewName = sheetData3.Value.ToString();
+					string vName = sheetData3.Value.ToString();
 
-					
+
 					Level newLevel = Level.Create(doc, levelElev);
 					newLevel.Name = levelName;
-					levelCounter++;
-
+					
 					ViewPlan curPlan = ViewPlan.Create(doc, curVFT.Id, newLevel.Id);
 
 					ViewPlan curRCP = ViewPlan.Create(doc, curRCPVFT.Id, newLevel.Id);
@@ -105,19 +103,20 @@ namespace Revit_Addin_Academy
 
 					ViewSheet newSheet = ViewSheet.Create(doc, collector2.FirstElementId());
 					newSheet.SheetNumber = sheetNum;
-					newSheet.Name = sheetName;
+					newSheet.Name = sheetName;										
 
-					View existingView = GetViewByName(doc, viewName);
+					View existingView = GetViewByName(doc, vName);
 
 					if (existingView != null)
 					{
-						Viewport newVP = Viewport.Create(doc, newSheet.Id, curPlan.Id, new XYZ(0, 0, 0));
+						Viewport newVP = Viewport.Create(doc, newSheet.Id, existingView.Id, new XYZ(0, 0, 0));
 					}
 					else
 					{
 						TaskDialog.Show("Error", "Could not find view.");
-					}					
-				}		
+					}
+
+				}				
 
 				t.Commit();
 
