@@ -33,10 +33,10 @@ namespace Revit_Addin_Academy
 			dialog.Filter = "Excel Files | *.xls; *.xlsx"; // What the user sees & specifiy what type of file the user can select
 
 			string excelFile = "";
-			
-			if(dialog.ShowDialog() == Forms.DialogResult.OK) // opens dialog box, and user clicks ok do something - captures what the user does
+
+			if (dialog.ShowDialog() == Forms.DialogResult.OK) // opens dialog box, and user clicks ok do something - captures what the user does
 			{
-				excelFile = dialog.FileName;				
+				excelFile = dialog.FileName;
 			}
 
 			// open Excel
@@ -51,7 +51,7 @@ namespace Revit_Addin_Academy
 
 			int rowCount1 = excelRange1.Rows.Count;
 			int rowCount2 = excelRange2.Rows.Count;
-						
+
 			ViewFamilyType curVFT = null;
 			ViewFamilyType curRCPVFT = null;
 
@@ -95,7 +95,7 @@ namespace Revit_Addin_Academy
 
 					Level newLevel = Level.Create(doc, levelElev);
 					newLevel.Name = levelName;
-					
+
 					ViewPlan curPlan = ViewPlan.Create(doc, curVFT.Id, newLevel.Id);
 
 					ViewPlan curRCP = ViewPlan.Create(doc, curRCPVFT.Id, newLevel.Id);
@@ -103,7 +103,7 @@ namespace Revit_Addin_Academy
 
 					ViewSheet newSheet = ViewSheet.Create(doc, collector2.FirstElementId());
 					newSheet.SheetNumber = sheetNum;
-					newSheet.Name = sheetName;										
+					newSheet.Name = sheetName;
 
 					View existingView = GetViewByName(doc, vName);
 
@@ -116,7 +116,7 @@ namespace Revit_Addin_Academy
 						TaskDialog.Show("Error", "Could not find view.");
 					}
 
-				}				
+				}
 
 				t.Commit();
 
@@ -144,4 +144,3 @@ namespace Revit_Addin_Academy
 	}
 
 }
-
