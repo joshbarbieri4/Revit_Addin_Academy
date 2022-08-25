@@ -128,7 +128,7 @@ namespace Revit_Addin_Academy
 		private View GetViewByName(Document doc, string viewName)
 		{
 			FilteredElementCollector collector = new FilteredElementCollector(doc);
-			collector.OfCategory(BuiltInCategory.OST_Viewers);
+			collector.OfCategory(BuiltInCategory.OST_Views);
 
 			foreach (View curView in collector)
 			{
