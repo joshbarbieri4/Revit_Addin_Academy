@@ -64,6 +64,8 @@ namespace Revit_Addin_Academy
 
 				using (Transaction t = new Transaction(doc))
 				{
+					t.Start("Setup project");
+					
 					ViewFamilyType planVFT = GetViewFamilyType(doc, "plan");
 					ViewFamilyType rcpVFT = GetViewFamilyType(doc, "rcp");
 
