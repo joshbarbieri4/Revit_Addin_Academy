@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
   <AddIn Type="Command">
-    <Text>Command Revit_Addin_Academy</Text>
+    <Text>Project Setup - Part 2</Text>
     <Description>Some description for Revit_Addin_Academy</Description>
     <Assembly>Revit_Addin_Academy.dll</Assembly>
-    <FullClassName>Revit_Addin_Academy.Command</FullClassName>
-    <ClientId>a55ef6a8-8d99-4ee2-a7d1-7fcb8d1f2190</ClientId>
+    <FullClassName>Revit_Addin_Academy.cmdProjectSetup</FullClassName>
+    <ClientId>67583E54-70BC-4859-AD00-6246B9B14F7D</ClientId>
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
   </AddIn>
@@ -16,5 +16,5 @@
     <ClientId>bc1bafcf-6fc4-432c-909e-a65fd67e379d</ClientId>
     <VendorId>com.typepad.thebuildingcoder</VendorId>
     <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
-  </AddIn>
+  </AddIn>  
 </RevitAddIns>
